@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>WEBLEARNING — Master Web Development</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Load Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+      <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+    <meta name="theme-color" content="#4F46E5">
+
+    <!-- Inline Custom Styles -->
+    <style>
+        /* Root Variables for Consistent Theming */
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --secondary: #EC4899;
+            --secondary-dark: #DB2777;
+            --accent: #10B981;
+            --bg-light: #F9FAFB;
+            --text-dark: #1F2937;
+            --text-muted: #6B7280;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom Dashboard Styles */
+        .dashboard {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 50;
+            width: 100%;
+            max-width: 340px;
+            height: 100vh;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            background: var(--bg-light);
+            border-left: 1px solid #E5E7EB;
+        }
+
+        .dashboard[aria-expanded="true"] {
+            transform: translateX(0);
+        }
+
+        /* Responsive Grid Layout */
+        .main-grid {
+            display: grid;
+            gap: 2rem;
+            grid-template-areas: "content";
+        }
+
+        @media (min-width: 768px) {
+            .main-grid {
+                grid-template-columns: 2fr 1fr;
+                grid-template-areas: "content dashboard";
+            }
+            .dashboard {
+                position: static;
+                width: auto;
+                max-width: none;
+                height: auto;
+                transform: none;
+                transition: none;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                border: none;
+                border-radius: 1rem;
+            }
+            .dashboard[aria-expanded="false"] {
+                display: none;
+            }
+            #dash-toggle {
+                display: none;
+            }
+        }
+
+        /* Component Styles */
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.15);
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            color: white;
+            background: var(--primary);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            background: white;
+            transition: all 0.2s ease;
+        }
+        .btn-outline:hover {
+            background: #EEF2FF;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+            background: var(--secondary);
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background: var(--secondary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white shadow-lg">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo/Brand -->
+                <a href="../home/index.html" class="flex items-center gap-3 flex-shrink-0">
+                    <div class="logo-mark font-extrabold text-3xl text-indigo-600">WL</div>
+                    <span class="brand-title font-bold text-2xl text-gray-900 hidden sm:block">WEBLEARNING</span>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="../home/index.html" class="text-gray-600 hover:text-indigo-600 font-medium text-lg transition duration-200 py-2 border-b-2 border-transparent hover:border-indigo-600">Home</a>
+                    <a href="../lessons/lesson.html" class="text-gray-600 hover:text-indigo-600 font-medium text-lg transition duration-200 py-2 border-b-2 border-transparent hover:border-indigo-600">Lessons</a>
+                    <a href="../about/about.html" class="text-gray-600 hover:text-indigo-600 font-medium text-lg transition duration-200 py-2 border-b-2 border-transparent hover:border-indigo-600">About</a>
+                    <a href="../contacts/contact.html" class="text-gray-600 hover:text-indigo-600 font-medium text-lg transition duration-200 py-2 border-b-2 border-transparent hover:border-indigo-600">Contact</a>
+                </nav>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-4">
+                    <div data-auth="guest">
+                        <a href="../login/index.html" class="btn-secondary hidden sm:inline-flex">Login</a>
+                    </div>
+                    <div data-auth="required" class="hidden sm:flex items-center gap-3">
+                        <span class="text-sm font-medium text-gray-700 hidden lg:inline" data-user-email>Guest User</span>
+                        <a href="../settings/index.html" class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center border border-indigo-200 hover:bg-indigo-200 transition" aria-label="Settings">
+                            <i class="fas fa-cog text-base"></i>
+                        </a>
+                    </div>
+                    <button id="universal-dash-toggle" class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center border border-indigo-200 hover:bg-indigo-200 transition" aria-label="Toggle Dashboard" aria-expanded="true">
+                        <i id="dash-toggle-icon" class="fas fa-chart-bar text-base"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero + Profile Section -->
+    <main class="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="main-grid">
+            <section class="flex flex-col md:flex-row items-center gap-12 main-content">
+                <!-- Hero Text -->
+                <div class="flex-1 text-center md:text-left max-w-2xl mx-auto md:mx-0 pt-12 animate-fadeInUp">
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-gray-900 leading-tight">Master Coding with Fun & Practical Lessons</h1>
+                    <p class="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl">Dive into web development with interactive lessons, real-world projects, and guided paths to transform you into a confident developer.</p>
+                    <div class="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
+                        <a href="../lessons/lesson.html" class="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto">
+                            <i class="fas fa-play-circle"></i> Start Learning
+                        </a>
+                        <a href="../about/about.html" class="btn-outline flex items-center justify-center gap-2 w-full sm:w-auto">
+                            <i class="fas fa-info-circle"></i> Discover More
+                        </a>
+                    </div>
+                </div>
+<!-- Profile Card -->
+     <section class="flex flex-col md:flex-row items-center justify-center gap-12 py-10 px-6 main-content bg-gray-50">
+  <div class="card flex-1 max-w-md bg-white p-8 rounded-2xl shadow-lg text-center md:text-left animate-fadeInUp" 
+       style="animation-delay: 0.2s;" 
+       role="region" aria-labelledby="profile-title">
+
+    <!-- Profile Image -->
+    <div class="w-36 h-36 mx-auto mb-6 overflow-hidden rounded-full border-4 border-indigo-100 shadow-lg relative">
+      <!-- Lotus overlay -->
+      <div class="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-50 to-yellow-100 opacity-20" 
+           style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%234F46E5%27 stroke-width=%271%27%3E%3Cpath d=%27M12 3c1.5 0 3 .5 4 1.5 1-1 2.5-1.5 4-1.5 1.5 0 3 1 3 3 0 4-6 8-9 9-3-1-9-5-9-9 0-2 1.5-3 3-3 1.5 0 3 .5 4 1.5 1-1 2.5-1.5 4-1.5z%27/%3E%3C/svg%3E'); background-size: 20%;"></div>
+      <img src="../images/imagenha.jpg" 
+           alt="Profile picture of Chea Panha" 
+           class="w-full h-full object-cover profile-img" 
+           onerror="this.src='https://via.placeholder.com/150'" 
+           loading="lazy">
+    </div>
+
+    <!-- Text Info -->
+    <h3 id="profile-title" class="font-bold text-2xl mb-2 text-gray-900 profile-name">Chea Panha</h3>
+    <p class="text-gray-600 mb-1 profile-education">Computer Science Student, Cambodian University For Specialtiest</p>
+    <p class="text-gray-600 mb-4 profile-institution">Information Technology, ISTAD</p>
+
+    <!-- Skills Box -->
+    <div class="p-5 bg-indigo-50 rounded-xl border border-indigo-100 text-left">
+      <h4 class="font-semibold text-indigo-700 mb-3 flex items-center gap-2">
+        <i class="fas fa-code"></i> Skills
+      </h4>
+      <ul class="list-disc list-inside text-gray-700 text-sm sm:text-base space-y-2 ml-4 profile-skills">
+        <li><span class="font-semibold text-indigo-600">DataStructure Algorithms & OOP</span> </li>
+        <li><span class="font-semibold text-indigo-600"> Windows & Linux Server</li>
+        <li><span class="font-semibold text-indigo-600">Flutter Development</span></li>
+        <li><span class="font-semibold text-indigo-600">Web Development</li>
+        <li><span class="font-semibold text-indigo-600">Technician Networking</span></li>
+        <li><span class="font-semibold text-indigo-600">PHP Laravel</span> – Backend & MySQL</li>
+        <li><span class="font-semibold text-indigo-600">Firebase & SupaBase</span></li>
+       
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+            <!-- Dashboard -->
+            <aside id="site-dashboard" class="dashboard p-6" aria-expanded="true">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="font-bold text-2xl text-gray-900">Dashboard</div>
+                    <button id="dash-toggle" class="md:hidden text-xl p-2 rounded-full text-gray-600 hover:text-indigo-600 hover:bg-gray-100 transition" aria-expanded="true" aria-label="Close Dashboard">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="dashboard-content">
+                    <div class="p-4 bg-indigo-50 rounded-lg mb-6">
+                        <div class="text-sm font-medium text-indigo-700 mb-1">Quick Stats</div>
+                        <div class="text-4xl font-extrabold text-indigo-800">10K+</div>
+                        <div class="text-base text-indigo-700">Students Enrolled</div>
+                    </div>
+                    <nav class="flex flex-col gap-2 mb-6 border-b pb-4">
+                        <a href="../lessons/lesson.html" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-indigo-50 flex items-center gap-2"><i class="fas fa-book"></i>Browse Lessons</a>
+                        <a href="../contacts/contact.html" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-indigo-50 flex items-center gap-2"><i class="fas fa-envelope"></i>Contact Support</a>
+                        <a href="../settings/index.html" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-indigo-50 flex items-center gap-2"><i class="fas fa-cog"></i>Settings</a>
+                        <a href="../about/about.html" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-indigo-50 flex items-center gap-2"><i class="fas fa-info-circle"></i>About Us</a>
+                    </nav>
+                    <div class="mt-2">
+                        <div class="text-sm font-semibold text-gray-500 mb-2">Account Status</div>
+                        <div data-auth="required" class="p-3 bg-green-50 text-green-800 rounded-lg text-sm font-medium flex items-center gap-2">
+                            <i class="fas fa-user-circle"></i> <span data-user-email>Loading...</span>
+                        </div>
+                        <div data-auth="guest" class="mt-3">
+                            <a href="../login/index.html" class="btn-primary w-full text-sm">Login</a>
+                        </div>
+                        <div data-auth="guest" class="mt-3">
+                            <a href="../login/index.html" class="btn-primary w-full text-sm">Signup</a>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        
+
+         <!--  <section class="mb-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="card p-6 text-center hover:bg-indigo-50 animate-fadeInUp">
+                <div class="text-3xl font-bold text-indigo-600 mb-2">10K+</div>
+                <div class="text-gray-600">Students Enrolled</div>
+            </div>
+            <div class="card p-6 text-center hover:bg-indigo-50 animate-fadeInUp" style="animation-delay: 0.1s;">
+                <div class="text-3xl font-bold text-indigo-600 mb-2">150+</div>
+                <div class="text-gray-600">Lessons Available</div>
+            </div>
+            <div class="card p-6 text-center hover:bg-indigo-50 animate-fadeInUp" style="animation-delay: 0.2s;">
+                <div class="text-3xl font-bold text-indigo-600 mb-2">95%</div>
+                <div class="text-gray-600">Completion Rate</div>
+            </div>
+            <div class="card p-6 text-center hover:bg-indigo-50 animate-fadeInUp" style="animation-delay: 0.3s;">
+                <div class="text-3xl font-bold text-indigo-600 mb-2">24/7</div>
+                <div class="text-gray-600">Support Available</div>
+            </div>
+        </section> -->
+        <!-- Learning Paths Section -->
+        <section class="mb-20">
+            <div class="text-center mb-12 animate-fadeInUp">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Your Path to Success</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Choose a track tailored to your goals and start building today.</p>
+            </div>
+
+
+       
+
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+                <div class="card p-6 animate-fadeInUp">
+                    <h3 class="font-bold text-xl mb-3 text-gray-900 text-center">Frontend Development</h3>
+                    <p class="text-gray-600 mb-4 text-center">Craft stunning, interactive user interfaces.</p>
+                    <ul class="mb-6 text-gray-600 text-left space-y-2">
+                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>HTML5 & CSS3</li>
+                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>JavaScript ES6+</li>
+                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>React & Vue.js</li>
+                    </ul>
+                    <a href="#" onclick="showPathwaySuggestions('Frontend Development', event)" class="btn-primary w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700">
+                        ✨ Explore Path
+                    </a>
+                </div>
+                <div class="card p-6 animate-fadeInUp" style="animation-delay: 0.1s;">
+                    <h3 class="font-bold text-xl mb-3 text-gray-900 text-center">Backend Development</h3>
+                    <p class="text-gray-600 mb-4 text-center">Power web apps with robust server-side solutions.</p>
+                    <ul class="mb-6 text-gray-600 text-left space-y-2">
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Node.js & Express</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Python & Django</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Databases & APIs</li>
+                    </ul>
+                    <a href="#" onclick="showPathwaySuggestions('Backend Development', event)" class="btn-primary w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700">
+                        ✨ Explore Path
+                    </a>
+                </div>
+                <div class="card p-6 animate-fadeInUp" style="animation-delay: 0.2s;">
+                    <h3 class="font-bold text-xl mb-3 text-gray-900 text-center">Data Science</h3>
+                    <p class="text-gray-600 mb-4 text-center">Analyze data and build intelligent models.</p>
+                    <ul class="mb-6 text-gray-600 text-left space-y-2">
+                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Python & Pandas</li>
+                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Data Visualization</li>
+                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Machine Learning</li>
+                    </ul>
+                    <a href="#" onclick="showPathwaySuggestions('Data Science', event)" class="btn-primary w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700">
+                        ✨ Explore Path
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-12 mt-auto">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-white">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10 border-b border-gray-700 pb-8">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="font-bold text-3xl text-indigo-300">WL</div>
+                        <div class="font-bold text-xl">WEBLEARNING</div>
+                    </div>
+                    <p class="text-gray-300 mb-4">Master web development with hands-on projects and guided learning paths.</p>
+                    <div class="flex gap-4 text-xl">
+                        <a href="#" class="text-gray-300 hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 text-gray-200">Quick Links</h4>
+                    <div class="flex flex-col gap-2 text-gray-300">
+                        <a href="../home/index.html" class="hover:text-white transition">Home</a>
+                        <a href="../lessons/lesson.html" class="hover:text-white transition">Lessons</a>
+                        <a href="../about/about.html" class="hover:text-white transition">About Us</a>
+                        <a href="../contacts/contact.html" class="hover:text-white transition">Contact</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 text-gray-200">Learning Paths</h4>
+                    <div class="flex flex-col gap-2 text-gray-300">
+                        <a href="#" class="hover:text-white transition">Frontend Development</a>
+                        <a href="#" class="hover:text-white transition">Backend Development</a>
+                        <a href="#" class="hover:text-white transition">Data Science</a>
+                        <a href="#" class="hover:text-white transition">Mobile Development</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4 text-gray-200">Support</h4>
+                    <div class="flex flex-col gap-2 text-gray-300">
+                        <a href="#" class="hover:text-white transition">Help Center</a>
+                        <a href="#" class="hover:text-white transition">Community</a>
+                        <a href="#" class="hover:text-white transition">FAQ</a>
+                        <a href="#" class="hover:text-white transition">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-4 text-center text-gray-300 text-sm">
+                © 2025 WEBLEARNING. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Pathway Suggestions Modal -->
+    <div id="pathway-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 z-[100] flex items-center justify-center p-4" onclick="this.classList.add('hidden')">
+        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full transform transition-all duration-300 overflow-y-auto max-h-[90vh]" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-start mb-6">
+                <h3 class="text-2xl font-bold text-gray-900" id="pathway-modal-title">Pathway Ideas</h3>
+                <button onclick="document.getElementById('pathway-modal').classList.add('hidden')" class="text-gray-500 hover:text-gray-800 text-xl" aria-label="Close Modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="pathway-modal-content" class="text-gray-700 space-y-4">
+                <p class="text-center text-sm text-indigo-600"><i class="fas fa-spinner fa-spin mr-2"></i> Generating pathway suggestions...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+    // Mock Auth
+    ;(function mockAuth() {
+        const userEmailElement = document.querySelector('[data-user-email]');
+        const requiredElements = document.querySelectorAll('[data-auth="required"]');
+        const guestElements = document.querySelectorAll('[data-auth="guest"]');
+        const isUserLoggedIn = false;
+
+        if (isUserLoggedIn) {
+            userEmailElement.textContent = 'cheapanha@example.com';
+            requiredElements.forEach(el => el.style.display = 'flex');
+            guestElements.forEach(el => el.style.display = 'none');
+        } else {
+            userEmailElement.textContent = 'Guest';
+            requiredElements.forEach(el => el.style.display = 'none');
+            guestElements.forEach(el => el.style.display = 'flex');
+        }
+    })();
+
+    // Dashboard Toggle
+    ;(function(){
+        const dash = document.getElementById('site-dashboard');
+        const toggleBtn = document.getElementById('universal-dash-toggle');
+        const toggleIcon = document.getElementById('dash-toggle-icon');
+        const closeBtn = document.getElementById('dash-toggle');
+
+        if (!dash || !toggleBtn || !toggleIcon || !closeBtn) return;
+
+        function toggleDashboard(open) {
+            const isOpening = open === undefined ? dash.getAttribute('aria-expanded') !== 'true' : open;
+            dash.setAttribute('aria-expanded', isOpening.toString());
+            toggleBtn.setAttribute('aria-expanded', isOpening.toString());
+            closeBtn.setAttribute('aria-expanded', isOpening.toString());
+
+            if (window.innerWidth < 768) {
+                dash.style.transform = isOpening ? 'translateX(0)' : 'translateX(100%)';
+            } else {
+                dash.style.display = isOpening ? 'block' : 'none';
+            }
+
+            toggleIcon.classList.remove(isOpening ? 'fa-chart-bar' : 'fa-times');
+            toggleIcon.classList.add(isOpening ? 'fa-times' : 'fa-chart-bar');
+        }
+
+        toggleBtn.addEventListener('click', () => toggleDashboard());
+        closeBtn.addEventListener('click', () => toggleDashboard(false));
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                dash.style.display = dash.getAttribute('aria-expanded') === 'true' ? 'block' : 'none';
+                dash.style.transform = 'none';
+            } else {
+                dash.style.display = 'block';
+                dash.style.transform = dash.getAttribute('aria-expanded') === 'true' ? 'translateX(0)' : 'translateX(100%)';
+            }
+        });
+
+        if (window.innerWidth >= 768) {
+            dash.style.display = 'block';
+            dash.style.transform = 'none';
+            toggleIcon.classList.remove('fa-times');
+            toggleIcon.classList.add('fa-chart-bar');
+        }
+    })();
+
+    // Gemini API Integration
+    const API_URL_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/';
+    const MODEL_NAME = 'gemini-2.5-flash-preview-09-2025';
+    const apiKey = "";
+
+    async function fetchWithBackoff(url, options, retries = 3, delay = 1000) {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const response = await fetch(url, options);
+                if (response.status === 429 && i < retries - 1) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                    continue;
+                }
+                if (!response.ok) {
+                    const errorBody = await response.json();
+                    throw new Error(errorBody.error?.message || `HTTP error! status: ${response.status}`);
+                }
+                return response;
+            } catch (error) {
+                if (i === retries - 1) throw error;
+                await new Promise(resolve => setTimeout(resolve, delay));
+                delay *= 2;
+            }
+        }
+    }
+
+    async function fetchGeminiResponse(userQuery, systemPrompt, useSearch = false, apiKeyOverride = '') {
+        const keyToUse = apiKeyOverride || apiKey || '';
+        const apiUrl = `${API_URL_BASE}${MODEL_NAME}:generateContent${keyToUse ? `?key=${encodeURIComponent(keyToUse)}` : ''}`;
+        const payload = {
+            contents: [{ parts: [{ text: userQuery }] }],
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+        };
+        if (useSearch) {
+            payload.tools = [{ "google_search": {} }];
+        }
+        const headers = { 'Content-Type': 'application/json' };
+        if (keyToUse) headers['Authorization'] = `Bearer ${keyToUse}`;
+
+        const options = {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(payload)
+        };
+        try {
+            const response = await fetchWithBackoff(apiUrl, options);
+            const result = await response.json();
+            return result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't generate a response.";
+        } catch (error) {
+            console.error("Gemini API Error:", error.message);
+            throw new Error(error.message);
+        }
+    }
+
+    function markdownToHtml(markdown) {
+        let html = markdown || '';
+        html = html.replace(/## (.*)/g, `<h4 class="text-xl font-bold text-gray-900 border-b border-gray-200 pb-1 mt-6 mb-3">$1</h4>`);
+        const lines = html.split('\n');
+        let inList = false;
+        let processedLines = lines.map(line => {
+            const trimmedLine = line.trim();
+            if (trimmedLine.match(/^(\*|-)\s/)) {
+                if (!inList) {
+                    inList = true;
+                    return `<ul class="list-disc list-inside space-y-2"><li class="text-gray-700">${trimmedLine.substring(2).trim()}</li>`;
+                }
+                return `<li class="text-gray-700">${trimmedLine.substring(2).trim()}</li>`;
+            } else {
+                if (inList) {
+                    inList = false;
+                    return `</ul><p class="text-gray-700">${trimmedLine}</p>`;
+                }
+                if (trimmedLine) {
+                    return `<p class="text-gray-700">${trimmedLine}</p>`;
+                }
+                return '';
+            }
+        }).join('');
+        if (inList) processedLines += '</ul>';
+        return processedLines;
+    }
+
+    // Project Brainstormer
+    document.addEventListener('DOMContentLoaded', () => {
+        const brainstormBtn = document.getElementById('brainstorm-btn');
+        const projectThemeInput = document.getElementById('project-theme');
+        const projectOutput = document.getElementById('project-output');
+        const projectLoading = document.getElementById('project-loading');
+        const projectError = document.getElementById('project-error');
+
+        if (brainstormBtn) {
+            brainstormBtn.addEventListener('click', async () => {
+                const theme = projectThemeInput.value.trim() || "modern web development";
+                projectOutput.innerHTML = 'Generating idea...';
+                projectOutput.classList.remove('bg-gray-100', 'text-gray-700');
+                projectOutput.classList.add('text-indigo-600', 'font-semibold');
+                projectError.classList.add('hidden');
+                projectLoading.classList.remove('hidden');
+                brainstormBtn.disabled = true;
+
+                const systemPrompt = "You are a creative web development project generator. Provide one innovative, practical, and small-to-medium sized project idea (no more than 50 words) based on the user's theme. State the idea clearly, focusing on its core technology and purpose. Do not use markdown formatting.";
+                const userQuery = `Generate a web development project idea based on the theme: "${theme}".`;
+
+                async function resolveApiKey() {
+                    try {
+                        const mod = await import('/assets/ai-config.js');
+                        if (mod && typeof mod.getApiKey === 'function') {
+                            const k = mod.getApiKey();
+                            if (k) return k;
+                        }
+                    } catch (e) {}
+                    if (window.AI_API_KEY && window.AI_API_KEY.length > 0) return window.AI_API_KEY;
+                    try { const fromStorage = localStorage.getItem('weblearning_ai_key'); if (fromStorage) return fromStorage; } catch(e) {}
+                    return '';
+                }
+
+                const apiKey = await resolveApiKey();
+                if (!apiKey) {
+                    projectError.textContent = 'No API key found. Add your key to `assets/ai-config.js` or set localStorage `weblearning_ai_key`.';
+                    projectError.classList.remove('hidden');
+                    projectOutput.textContent = 'Could not generate idea.';
+                    projectLoading.classList.add('hidden');
+                    brainstormBtn.disabled = false;
+                    return;
+                }
+
+                try {
+                    const responseText = await fetchGeminiResponse(userQuery, systemPrompt, false, apiKey);
+                    projectOutput.textContent = responseText;
+                } catch (error) {
+                    projectError.textContent = `Error: ${error.message}`;
+                    projectError.classList.remove('hidden');
+                    projectOutput.textContent = 'Could not generate idea.';
+                } finally {
+                    projectLoading.classList.add('hidden');
+                    projectOutput.classList.remove('text-indigo-600', 'font-semibold');
+                    projectOutput.classList.add('bg-gray-100', 'text-gray-700');
+                    brainstormBtn.disabled = false;
+                }
+            });
+        }
+    });
+
+    // Pathway Suggestions
+    async function showPathwaySuggestions(pathwayTitle, event) {
+        event.preventDefault();
+        const modal = document.getElementById('pathway-modal');
+        const titleElement = document.getElementById('pathway-modal-title');
+        const contentElement = document.getElementById('pathway-modal-content');
+        
+        titleElement.textContent = `${pathwayTitle} Learning Path`;
+        contentElement.innerHTML = '<p class="text-center text-lg font-medium text-indigo-600 p-8"><i class="fas fa-spinner fa-spin mr-3"></i> Generating pathway suggestions...</p>';
+        modal.classList.remove('hidden');
+
+        const systemPrompt = "You are an expert curriculum designer. Provide a structured, three-step learning roadmap (Beginner, Intermediate, Advanced) for the specified development path. Use clear Markdown headings (##) for each step and descriptive bulleted lists for the topics. The entire response must be formatted using Markdown for readability. Do not include any introductory or concluding sentences outside of the roadmap content itself.";
+        const userQuery = `Create a detailed learning pathway for: ${pathwayTitle}. Focus on modern tools and best practices.`;
+
+        async function resolveApiKeyForPathways() {
+            try {
+                const mod = await import('/assets/ai-config.js');
+                if (mod && typeof mod.getApiKey === 'function') {
+                    const k = mod.getApiKey();
+                    if (k) return k;
+                }
+            } catch (e) {}
+            if (window.AI_API_KEY && window.AI_API_KEY.length > 0) return window.AI_API_KEY;
+            try { const fromStorage = localStorage.getItem('weblearning_ai_key'); if (fromStorage) return fromStorage; } catch(e) {}
+            return '';
+        }
+
+        const apiKey = await resolveApiKeyForPathways();
+        if (!apiKey) {
+            contentElement.innerHTML = `<div class="p-4 bg-yellow-50 text-yellow-800 rounded-lg">API key missing. Add your key to <code>assets/ai-config.js</code> or set localStorage <code>weblearning_ai_key</code>.</div>`;
+            return;
+        }
+
+        try {
+            const markdownResponse = await fetchGeminiResponse(userQuery, systemPrompt, false, apiKey);
+            const htmlContent = markdownToHtml(markdownResponse);
+            contentElement.innerHTML = htmlContent;
+        } catch (error) {
+            contentElement.innerHTML = `<div class="p-4 bg-red-100 text-red-700 rounded-lg">Error: Failed to retrieve path ideas.</div>`;
+        }
+    }
+
+    window.showPathwaySuggestions = showPathwaySuggestions;
+    </script>
+</body>
+</html>

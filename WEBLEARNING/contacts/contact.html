@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Contact — WEBLEARNING</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="../assets/drawer.js" defer></script>
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+    <meta name="theme-color" content="#6366F1">
+    <!-- Using modular Firebase via dynamic imports in page scripts -->
+    <script defer src="script.js"></script>
+    <script src="../assets/auth.js" defer></script>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="../home/index.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold">WL</div>
+                <div class="text-lg font-bold">Contact</div>
+            </a>
+            <div>
+                <a class="px-3 py-2 rounded-md" href="../home/index.html">Home</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        <div class="bg-white rounded-xl shadow p-6">
+            <h1 class="text-2xl font-bold mb-3">Get in touch</h1>
+            <p class="text-slate-600 mb-4">Questions? Feedback? Drop us a message and we'll get back to you.</p>
+            <form id="contact-form" class="grid gap-3">
+                <input name="name" required placeholder="Your name" class="p-3 border rounded" />
+                <input name="email" type="email" required placeholder="Your email" class="p-3 border rounded" />
+                <textarea name="message" rows="6" required placeholder="Message" class="p-3 border rounded"></textarea>
+                <div class="flex items-center gap-3">
+                    <button type="submit" class="px-4 py-2 rounded bg-indigo-600 text-white">Send message</button>
+                    <div id="contact-status" class="text-sm text-slate-500"></div>
+                </div>
+            </form>
+            <p class="mt-4 text-xs text-slate-400">Note: You can configure this form to send messages to Firebase or an email provider. See /settings for integration.</p>
+        </div>
+    </main>
+    <footer class="bg-white border-t mt-12">
+        <div class="max-w-4xl mx-auto px-4 py-6 text-sm text-slate-500">© WEBLEARNING — Contact</div>
+    </footer>
+</body>
+</html>
